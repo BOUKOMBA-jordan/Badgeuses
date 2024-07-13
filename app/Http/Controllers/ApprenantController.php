@@ -3,89 +3,77 @@
 namespace App\Http\Controllers;
 
 use App\Models\Apprenant;
+use App\Models\Discipline;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ApprenantController extends Controller
 {
-    /**
-     * Afficher la liste des apprenants.
-     */
     public function index()
     {
-        $apprenants = Apprenant::with('carte')->get();
-        return Inertia::render('Admin/Apprenant/Index', ['apprenants' => $apprenants]);
+        $apprenants = Apprenant::with('disciplines')->get();
+        return Inertia::render('Admin/Apprenant/Index', [
+            'apprenants' => $apprenants,
+        ]);
     }
 
-    /**
-     * Afficher le formulaire de création d'un nouvel apprenant.
-     */
     public function create()
     {
-        return Inertia::render('Admin/Apprenant/Create');
+        $disciplines = Discipline::all();
+        return Inertia::render('Admin/Apprenant/Create', [
+            'disciplines' => $disciplines,
+        ]);
     }
 
-    /**
-     * Stocker un nouvel apprenant dans la base de données.
-     */
     public function store(Request $request)
     {
-        $request->validate([
-            'nom' => 'required',
-            'prenom' => 'required',
-            'carte_id' => 'required|exists:cartes,id',
-            'promotion' => 'required',
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'carte_id' => 'nullable|exists:cartes,id',
+            'promotion' => 'nullable|string|max:255',
+            'discipline_id' => 'required|exists:disciplines,id',
         ]);
 
-        Apprenant::create($request->all());
+        $apprenant = Apprenant::create($validated);
 
-        return redirect()->route('admin.apprenant.index')->with('success', 'Apprenant créé avec succès.');
+        $apprenant->disciplines()->attach($validated['discipline_id']);
+
+        return redirect()->route('admin.apprenant.index');
     }
 
-    /**
-     * Afficher les détails d'un apprenant spécifique.
-     */
-    public function show($id)
+    public function show(Apprenant $apprenant)
     {
-        $apprenant = Apprenant::with('carte')->findOrFail($id);
-        return Inertia::render('Admin/Apprenant/Show', ['apprenant' => $apprenant]);
+        return Inertia::render('Admin/Apprenant/Show', [
+            'apprenant' => $apprenant
+        ]);
     }
 
-    /**
-     * Afficher le formulaire d'édition d'un apprenant spécifique.
-     */
-    public function edit($id)
+    public function edit(Apprenant $apprenant)
     {
-        $apprenant = Apprenant::with('carte')->findOrFail($id);
-        return Inertia::render('Admin/Apprenant/Edit', ['apprenant' => $apprenant]);
+        return Inertia::render('Admin/Apprenant/Edit', [
+            'apprenant' => $apprenant
+        ]);
     }
 
-    /**
-     * Mettre à jour les informations d'un apprenant spécifique dans la base de données.
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request, Apprenant $apprenant)
     {
-        $request->validate([
-            'nom' => 'required',
-            'prenom' => 'required',
-            'carte_id' => 'required|exists:cartes,id',
-            'promotion' => 'required',
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'carte_id' => 'nullable|exists:cartes,id',
+            'promotion' => 'nullable|string|max:255',
         ]);
 
-        $apprenant = Apprenant::findOrFail($id);
-        $apprenant->update($request->all());
+        $apprenant->update($validated);
 
-        return redirect()->route('admin.apprenant.index')->with('success', 'Apprenant mis à jour avec succès.');
+        return redirect()->route('admin.apprenant.index');
     }
 
-    /**
-     * Supprimer un apprenant spécifique de la base de données.
-     */
-    public function destroy($id)
+    public function destroy(Apprenant $apprenant)
     {
-        $apprenant = Apprenant::findOrFail($id);
         $apprenant->delete();
 
-        return redirect()->route('admin.apprenant.index')->with('success', 'Apprenant supprimé avec succès.');
+        return redirect()->route('admin.apprenant.index');
     }
 }

@@ -2,22 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Apprenant extends Model
 {
-    use HasFactory;
+    protected $fillable = ['nom', 'prenom', 'carte_id', 'promotion', 'discipline_id'];
 
-    protected $fillable = [
-        'nom',
-        'prenom',
-        'carte_id',
-        'promotion',
-    ];
-
-    public function carte()
+    /**
+     * Relation avec la discipline
+     */
+    public function discipline()
     {
-        return $this->belongsTo(Carte::class);
+        return $this->belongsTo(Discipline::class);
     }
 }

@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Carte extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['numero'];
+
+    public function apprenant()
+    {
+        return $this->hasOne(Apprenant::class);
+    }
 }

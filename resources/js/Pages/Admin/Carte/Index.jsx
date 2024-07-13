@@ -1,41 +1,63 @@
-import React from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import React from "react";
+import { Inertia } from "@inertiajs/inertia";
+import { Link } from "@inertiajs/inertia-react";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Index = ({ cartes }) => {
-    const { props } = usePage();
+    const handleDelete = (id) => {
+        if (confirm('Êtes-vous sûr(e) de vouloir supprimer cette carte ?')) {
+            Inertia.delete(route('admin.carte.destroy', id), {
+                onSuccess: () => {
+                    // Mettre à jour les données après la suppression
+                    Inertia.reload();
+                },
+            });
+        }
+    };
+
+    // Vérification si cartes est null ou undefined
+    if (!cartes) {
+        return (
+            <div className="container mt-5">
+                <h1 className="mb-4">Liste des Cartes</h1>
+                <p>Chargement en cours...</p>
+            </div>
+        );
+    }
+
     return (
-        <div className="container">
-            <h1>Liste des cartes</h1>
-            <Link href={route('admin.carte.create')} className="btn btn-primary">Ajouter une carte</Link>
-            {props.flash.success && <div className="alert alert-success mt-2">{props.flash.success}</div>}
-            {cartes.length > 0 ? (
-                <table className="table table-bordered mt-4">
+        <div className="container mt-5">
+            <h1 className="mb-4">Liste des Cartes</h1>
+            <Link href={route('admin.carte.create')} className="btn btn-primary mb-3">
+                Ajouter une Carte
+            </Link>
+            <div className="table-responsive">
+                <table className="table table-striped">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Code</th>
+                            <th>Numéro</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {cartes.map(carte => (
                             <tr key={carte.id}>
-                                <td>{carte.id}</td>
-                                <td>{carte.code}</td>
+                                <td>{carte.numero}</td>
                                 <td>
-                                    <Link href={route('admin.carte.edit', carte.id)} className="btn btn-warning">Modifier</Link>
-                                    <form action={route('admin.carte.destroy', carte.id)} method="POST" style={{ display: 'inline' }}>
-                                        <input type="hidden" name="_method" value="DELETE" />
-                                        <button type="submit" className="btn btn-danger">Supprimer</button>
-                                    </form>
+                                    <Link href={route('admin.carte.edit', carte.id)} className="btn btn-sm btn-warning me-2">
+                                        Modifier
+                                    </Link>
+                                    <button 
+                                        onClick={() => handleDelete(carte.id)} 
+                                        className="btn btn-sm btn-danger">
+                                        Supprimer
+                                    </button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-            ) : (
-                <p>Aucune carte trouvée.</p>
-            )}
+            </div>
         </div>
     );
 };

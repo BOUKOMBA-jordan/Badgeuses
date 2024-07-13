@@ -22,10 +22,12 @@ class CarteController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'code' => 'required|unique:cartes',
+            'numero' => 'required|unique:cartes',
         ]);
 
-        Carte::create($request->all());
+        Carte::create([
+            'numero' => $request->numero,
+        ]);
 
         return redirect()->route('admin.carte.index')->with('success', 'Carte créée avec succès.');
     }
@@ -45,11 +47,13 @@ class CarteController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'code' => 'required|unique:cartes,code,'.$id,
+            'numero' => 'required|unique:cartes,numero,'.$id,
         ]);
 
         $carte = Carte::findOrFail($id);
-        $carte->update($request->all());
+        $carte->update([
+            'numero' => $request->numero,
+        ]);
 
         return redirect()->route('admin.carte.index')->with('success', 'Carte mise à jour avec succès.');
     }

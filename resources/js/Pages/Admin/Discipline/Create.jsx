@@ -5,26 +5,33 @@ import { Inertia } from '@inertiajs/inertia';
 
 const Create = () => {
     const [nom, setNom] = useState('');
-    const [description, setDescription] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        Inertia.post(route('admin.discipline.store'), { nom, description });
+        Inertia.post(route('admin.discipline.store'), { nom }).then(() => {
+            // Redirection ou autre action après la création réussie
+        }).catch((error) => {
+            // Gestion des erreurs, si nécessaire
+            console.log(error);
+        });
     };
 
     return (
-        <div>
+        <div className="container mt-5">
             <h1>Créer une nouvelle discipline</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Nom</label>
-                    <input type="text" value={nom} onChange={(e) => setNom(e.target.value)} />
+            <form onSubmit={handleSubmit} className="mt-4">
+                <div className="mb-3">
+                    <label htmlFor="nom" className="form-label">Nom</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="nom"
+                        value={nom}
+                        onChange={(e) => setNom(e.target.value)}
+                        required
+                    />
                 </div>
-                <div>
-                    <label>Description</label>
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-                </div>
-                <button type="submit">Créer</button>
+                <button type="submit" className="btn btn-primary">Créer</button>
             </form>
         </div>
     );

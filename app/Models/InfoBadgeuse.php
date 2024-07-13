@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class InfoBadgeuse extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['numero'];
 }

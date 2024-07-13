@@ -3,7 +3,7 @@ import { useForm } from '@inertiajs/react';
 
 const Edit = ({ carte }) => {
     const { data, setData, put, errors } = useForm({
-        code: carte.code,
+        numero: carte.numero,
     });
 
     const handleSubmit = (e) => {
@@ -14,9 +14,9 @@ const Edit = ({ carte }) => {
     return (
         <form onSubmit={handleSubmit}>
             <div className="form-group">
-                <label>Code</label>
-                <input type="text" className="form-control" value={data.code} onChange={e => setData('code', e.target.value)} />
-                {errors.code && <div className="text-danger">{errors.code}</div>}
+                <label>Numero</label>
+                <input type="text" className="form-control" value={data.numero} onChange={e => setData('numero', e.target.value)} />
+                {errors.numero && <div className="text-danger">{errors.numero}</div>}
             </div>
 
             <button type="submit" className="btn btn-primary">Enregistrer</button>

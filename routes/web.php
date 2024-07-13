@@ -1,14 +1,14 @@
 <?php
 
-// routes/web.php
-
+use \Ziggy;
 use App\Http\Controllers\ApprenantController;
+use App\Http\Controllers\CarteController;
 use App\Http\Controllers\DisciplineController;
-use App\Http\Controllers\CarteController; // Ajoutez ce use si vous avez un CarteController
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -31,10 +31,14 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::resource('apprenant', ApprenantController::class);
+
+    
     Route::resource('discipline', DisciplineController::class);
 
     // Ajoutez la route pour les cartes si nécessaire
     Route::resource('carte', CarteController::class);
 });
+
+
 
 require __DIR__.'/auth.php';

@@ -12,15 +12,21 @@ return new class extends Migration
     public function up()
     {
         Schema::create('apprenants', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->string('nom');
             $table->string('prenom');
-            $table->foreignId('carte_id')->constrained()->onDelete('cascade');
-            $table->string('promotion');
+            $table->unsignedBigInteger('carte_id')->nullable();
+            $table->string('promotion')->nullable();
+            $table->unsignedBigInteger('discipline_id')->nullable(); // Ajout de la colonne discipline_id
             $table->timestamps();
+
+            // Clé étrangère vers la table disciplines
+            $table->foreign('discipline_id')
+                ->references('id')
+                ->on('disciplines')
+                ->onDelete('set null'); // Assurez-vous que cela correspond à votre logique métier
         });
     }
-    
 
     /**
      * Reverse the migrations.

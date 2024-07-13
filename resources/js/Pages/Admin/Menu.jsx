@@ -1,35 +1,47 @@
-// Importez Ziggy-js directement comme un module nommé
-import { Ziggy } from 'ziggy-js';
+import React from "react";
+import { Link, usePage } from "@inertiajs/react";
+import { route } from 'ziggy-js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUsers, faBook, faMap } from '@fortawesome/free-solid-svg-icons';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-// Utilisation normale de Ziggy comme auparavant
 const Menu = () => {
     const { url } = usePage();
 
     return (
-        <nav className="bg-blue-600 shadow-lg">
-            <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-                <div className="relative flex items-center justify-center h-16">
-                    <div className="flex-1 flex items-center justify-center sm:items-stretch">
-                        <div className="hidden sm:block sm:ml-6">
-                            <div className="flex space-x-4">
-                                <Link 
-                                    href={Ziggy.route('admin.apprenant')} // Utilisation de Ziggy.route()
-                                    className={`text-white hover:bg-blue-700 hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium ${url === Ziggy.route('admin.apprenant') ? 'bg-blue-700' : ''}`}>
-                                    Apprenants
-                                </Link>
-                                <Link 
-                                    href={Ziggy.route('admin.discipline')} // Utilisation de Ziggy.route()
-                                    className={`text-white hover:bg-blue-700 hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium ${url === Ziggy.route('admin.discipline') ? 'bg-blue-700' : ''}`}>
-                                    Disciplines
-                                </Link>
-                                <Link 
-                                    href={Ziggy.route('admin.carte')} // Utilisation de Ziggy.route()
-                                    className={`text-white hover:bg-blue-700 hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium ${url === Ziggy.route('admin.carte') ? 'bg-blue-700' : ''}`}>
-                                    Carte
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
+        <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-lg"> {/* Utilisation de la classe bg-primary pour la couleur de fond */}
+            <div className="container-fluid">
+                <Link className="navbar-brand" href="#">Mon Application</Link>
+                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+                <div className="collapse navbar-collapse" id="navbarNav">
+                    <ul className="navbar-nav ms-auto">
+                        <li className="nav-item">
+                            <Link 
+                                href={route('admin.apprenant.index').url} // Utilisation de route('...').url
+                                className={`nav-link ${url.pathname === route('admin.apprenant.index').url ? 'active' : ''}`}>
+                                <FontAwesomeIcon icon={faUsers} className="me-1" />
+                                Apprenants
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link 
+                                href={route('admin.discipline.index').url} // Utilisation de route('...').url
+                                className={`nav-link ${url.pathname === route('admin.discipline.index').url ? 'active' : ''}`}>
+                                <FontAwesomeIcon icon={faBook} className="me-1" />
+                                Disciplines
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link 
+                                href={route('admin.carte.index').url} // Utilisation de route('...').url
+                                className={`nav-link ${url.pathname === route('admin.carte.index').url ? 'active' : ''}`}>
+                                <FontAwesomeIcon icon={faMap} className="me-1" />
+                                Carte
+                            </Link>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>
