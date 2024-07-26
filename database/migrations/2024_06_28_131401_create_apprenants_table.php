@@ -9,7 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('apprenants', function (Blueprint $table) {
             $table->bigIncrements('id');
@@ -33,6 +33,14 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('apprenants', function (Blueprint $table) {
+            // Suppression de la clé étrangère
+            $table->dropForeign(['discipline_id']);
+
+            // Suppression de la colonne discipline_id
+            $table->dropColumn('discipline_id');
+        });
+
         Schema::dropIfExists('apprenants');
     }
 };

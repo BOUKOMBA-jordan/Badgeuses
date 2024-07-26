@@ -1,12 +1,20 @@
-import React from 'react';
-import { Inertia } from '@inertiajs/inertia';
-import ApprenantForm from './ApprenantForm';
+import React, { useState } from "react";
+import { Inertia } from "@inertiajs/inertia";
+import ApprenantForm from "./ApprenantFormulaire";
 
-const EditApprenant = ({ apprenant, disciplines }) => {
+const EditApprenant = ({ apprenant, disciplines, cartes }) => {
+    const [successMessage, setSuccessMessage] = useState('');
+
     return (
-        <div className="container">
-            <h1>Modification de l'apprenant : {apprenant.nom} {apprenant.prenom}</h1>
-            <ApprenantForm apprenant={apprenant} disciplines={disciplines} />
+        <div className="container mt-5">
+            
+            {successMessage && <div className="alert alert-success">{successMessage}</div>}
+            <ApprenantForm
+                apprenant={apprenant}
+                disciplines={disciplines}
+                cartes={cartes}
+                onSuccess={() => setSuccessMessage('Apprenant mis à jour avec succès.')}
+            />
         </div>
     );
 };

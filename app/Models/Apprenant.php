@@ -8,11 +8,14 @@ class Apprenant extends Model
 {
     protected $fillable = ['nom', 'prenom', 'carte_id', 'promotion', 'discipline_id'];
 
-    /**
-     * Relation avec la discipline
-     */
+    // Relation avec le modèle Discipline
     public function discipline()
     {
-        return $this->belongsTo(Discipline::class);
+        return $this->belongsTo(Discipline::class, 'discipline_id');
+    }
+
+    public function horaires()
+    {
+        return $this->hasMany(Horaire::class);
     }
 }

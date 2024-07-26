@@ -1,5 +1,3 @@
-// resources/js/Pages/Admin/Discipline/Index.jsx
-
 import React from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { Link } from '@inertiajs/inertia-react';
@@ -14,12 +12,12 @@ const Index = ({ disciplines }) => {
 
     return (
         <div className="container mt-5">
-            <h1 className="mb-4">Liste des disciplines</h1>
+            <h1 className="mb-4">Liste des Disciplines</h1>
             <Link href={route('admin.discipline.create')} className="btn btn-primary mb-3">
-                Créer une nouvelle discipline
+                Créer une Nouvelle Discipline
             </Link>
             <div className="table-responsive">
-                <table className="table table-striped">
+                <table className="table table-striped table-bordered">
                     <thead>
                         <tr>
                             <th>Nom</th>
@@ -27,19 +25,27 @@ const Index = ({ disciplines }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {disciplines.map((discipline) => (
-                            <tr key={discipline.id}>
-                                <td>{discipline.nom}</td>
-                                <td>
-                                    <Link href={route('admin.discipline.edit', { id: discipline.id })} className="btn btn-sm btn-warning me-2">
-                                        Modifier
-                                    </Link>
-                                    <button onClick={() => handleDelete(discipline.id)} className="btn btn-sm btn-danger">
-                                        Supprimer
-                                    </button>
-                                </td>
+                        {disciplines.length === 0 ? (
+                            <tr>
+                                <td colSpan="2" className="text-center">Aucune discipline trouvée</td>
                             </tr>
-                        ))}
+                        ) : (
+                            disciplines.map((discipline) => (
+                                <tr key={discipline.id}>
+                                    <td>{discipline.nom}</td>
+                                    <td>
+                                        <Link href={route('admin.discipline.edit', { id: discipline.id })} className="btn btn-sm btn-warning me-2">
+                                            Modifier
+                                        </Link>
+                                        <button 
+                                            onClick={() => handleDelete(discipline.id)} 
+                                            className="btn btn-sm btn-danger">
+                                            Supprimer
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>

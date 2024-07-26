@@ -1,14 +1,13 @@
 <?php
 
-use \Ziggy;
 use App\Http\Controllers\ApprenantController;
 use App\Http\Controllers\CarteController;
 use App\Http\Controllers\DisciplineController;
+use App\Http\Controllers\HoraireController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -31,14 +30,13 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::resource('apprenant', ApprenantController::class);
-
-    
     Route::resource('discipline', DisciplineController::class);
-
-    // Ajoutez la route pour les cartes si nécessaire
     Route::resource('carte', CarteController::class);
 });
+// Routes resource pour Horaire
+Route::resource('horaire', HoraireController::class);
 
-
+// Ajouter une route personnalisée pour obtenir les détails des horaires
+Route::get('horaire/detail', [HoraireController::class, 'horaireDetail'])->name('horaire.detail');
 
 require __DIR__.'/auth.php';

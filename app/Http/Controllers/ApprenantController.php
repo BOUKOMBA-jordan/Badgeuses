@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Apprenant;
+use App\Models\Carte;
 use App\Models\Discipline;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,17 +12,24 @@ class ApprenantController extends Controller
 {
     public function index()
     {
-        $apprenants = Apprenant::with('disciplines')->get();
+        $apprenants = Apprenant::with('discipline')->get();
+        $disciplines = Discipline::all();
+    
         return Inertia::render('Admin/Apprenant/Index', [
             'apprenants' => $apprenants,
+            'disciplines' => $disciplines,
         ]);
     }
+    
 
     public function create()
     {
         $disciplines = Discipline::all();
+        $cartes = Carte::all(); // Assurez-vous que cette ligne est ajoutée
+
         return Inertia::render('Admin/Apprenant/Create', [
             'disciplines' => $disciplines,
+            'cartes' => $cartes,
         ]);
     }
 
@@ -35,24 +43,27 @@ class ApprenantController extends Controller
             'discipline_id' => 'required|exists:disciplines,id',
         ]);
 
-        $apprenant = Apprenant::create($validated);
+        Apprenant::create($validated);
 
-        $apprenant->disciplines()->attach($validated['discipline_id']);
-
-        return redirect()->route('admin.apprenant.index');
+        return redirect()->route('admin.apprenant.index')->with('success', 'Apprenant créé avec succès.');
     }
 
     public function show(Apprenant $apprenant)
     {
         return Inertia::render('Admin/Apprenant/Show', [
-            'apprenant' => $apprenant
+            'apprenant' => $apprenant,
         ]);
     }
 
     public function edit(Apprenant $apprenant)
     {
+        $disciplines = Discipline::all();
+        $cartes = Carte::all(); // Assurez-vous que cette ligne est ajoutée
+
         return Inertia::render('Admin/Apprenant/Edit', [
-            'apprenant' => $apprenant
+            'apprenant' => $apprenant,
+            'disciplines' => $disciplines,
+            'cartes' => $cartes, // Ajoutez les cartes ici
         ]);
     }
 
@@ -63,17 +74,18 @@ class ApprenantController extends Controller
             'prenom' => 'required|string|max:255',
             'carte_id' => 'nullable|exists:cartes,id',
             'promotion' => 'nullable|string|max:255',
+            'discipline_id' => 'required|exists:disciplines,id',
         ]);
 
         $apprenant->update($validated);
 
-        return redirect()->route('admin.apprenant.index');
+        return redirect()->route('admin.apprenant.index')->with('success', 'Apprenant mis à jour avec succès.');
     }
 
     public function destroy(Apprenant $apprenant)
     {
         $apprenant->delete();
 
-        return redirect()->route('admin.apprenant.index');
+        return redirect()->route('admin.apprenant.index')->with('success', 'Apprenant supprimé avec succès.');
     }
 }

@@ -1,0 +1,27 @@
+/* Styles pour la barre de navigation */
+.navbar {
+    background-color: #004C97; /* Couleur de fond */
+}
+
+.navbar-nav .nav-item {
+    margin-left: 1rem; /* Espacement entre les éléments du menu */
+}
+
+.navbar-nav .nav-link {
+    color: white; /* Couleur du texte */
+    padding: 0.75rem 1rem; /* Espacement interne */
+    border-radius: 0.25rem; /* Coins arrondis */
+    transition: background-color 0.3s, color 0.3s; /* Effets de transition */
+}
+
+/* Effet au survol */
+.navbar-nav .nav-link:hover {
+    background-color: #003d7a; /* Couleur de fond au survol */
+    color: #f8f9fa; /* Couleur du texte au survol */
+}
+
+/* Style pour l'élément actif */
+.navbar-nav .nav-link.active {
+    background-color: #003d7a; /* Couleur de fond pour l'élément actif */
+    color: #f8f9fa; /* Couleur du texte pour l'élément actif */
+}

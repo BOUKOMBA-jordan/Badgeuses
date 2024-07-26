@@ -2,17 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Discipline extends Model
 {
-    use HasFactory;
-
     protected $fillable = ['nom'];
 
+    // Relation avec le modèle Apprenant
     public function apprenants()
     {
-        return $this->belongsToMany(Apprenant::class);
+        return $this->hasMany(Apprenant::class, 'discipline_id');
     }
 }
