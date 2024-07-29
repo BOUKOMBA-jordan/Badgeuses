@@ -14,8 +14,15 @@ class Apprenant extends Model
         return $this->belongsTo(Discipline::class, 'discipline_id');
     }
 
+    // Relation avec le modèle Horaire
     public function horaires()
     {
         return $this->hasMany(Horaire::class);
+    }
+
+    // Relation avec le modèle Carte
+    public function carte()
+    {
+        return $this->belongsTo(Carte::class, 'carte_id');
     }
 }

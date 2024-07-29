@@ -5,17 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Horaire;
 use App\Models\Apprenant;
-use App\Models\Carte;
-use App\Models\Discipline;
+//use App\Models\Carte;
+//use App\Models\Discipline;
 use Illuminate\Support\Facades\DB;
 
 class HoraireController extends Controller
 {
     // Affiche une liste des horaires
     public function index(Request $request)
-    {
-        $jour = $request->input('jour', '2024-07-01');  // Vous pouvez obtenir la date depuis la requête ou utiliser une valeur par défaut
+{
+    $jour = $request->input('jour', '2024-07-01');
 
+    try {
         $resultats = Horaire::with(['carte.apprenant.discipline'])
             ->where('jour', $jour)
             ->get()
@@ -31,8 +32,14 @@ class HoraireController extends Controller
                 ];
             });
 
-        return view('horaire.index', compact('resultats'));
+        return response()->json($resultats);
+    } catch (\Exception $e) {
+        // Enregistrez l'erreur et retournez une réponse d'erreur
+        \Log::error('Erreur lors de la récupération des horaires: ' . $e->getMessage());
+        return response()->json(['message' => 'Erreur interne du serveur'], 500);
     }
+}
+
 
     // Affiche le formulaire de création (si nécessaire pour une vue web)
     public function create()
@@ -50,7 +57,7 @@ class HoraireController extends Controller
             'jour' => 'required|date',
             'premiere_utilisation' => 'required|date_format:Y-m-d H:i:s',
             'derniere_utilisation' => 'required|date_format:Y-m-d H:i:s',
-            'discipline' => 'required|string',
+            'discipline_id' => 'required|exists:disciplines,id',
         ]);
 
         $apprenant = Apprenant::where('nom', $request->nom)
@@ -66,7 +73,7 @@ class HoraireController extends Controller
             'jour' => $request->jour,
             'premiere_utilisation' => $request->premiere_utilisation,
             'derniere_utilisation' => $request->derniere_utilisation,
-            'discipline' => $request->discipline,
+            'discipline_id' => $request->discipline_id,
             'apprenant_id' => $apprenant->id,
         ]);
 
@@ -103,7 +110,7 @@ class HoraireController extends Controller
             'jour' => 'required|date',
             'premiere_utilisation' => 'required|date_format:Y-m-d H:i:s',
             'derniere_utilisation' => 'required|date_format:Y-m-d H:i:s',
-            'discipline' => 'required|string',
+            'discipline_id' => 'required|exists:disciplines,id',
         ]);
 
         $horaire = Horaire::find($id);
@@ -125,7 +132,7 @@ class HoraireController extends Controller
             'jour' => $request->jour,
             'premiere_utilisation' => $request->premiere_utilisation,
             'derniere_utilisation' => $request->derniere_utilisation,
-            'discipline' => $request->discipline,
+            'discipline_id' => $request->discipline_id,
             'apprenant_id' => $apprenant->id,
         ]);
 
@@ -147,13 +154,15 @@ class HoraireController extends Controller
     }
 
     // Méthode pour obtenir les horaires avec les informations demandées
-    public function horaireDetail()
-    {
+    // HoraireController.php
+
+public function horaireDetail()
+{
+    try {
         $horaires = DB::table('horaires as h')
             ->join('apprenants as a', 'h.apprenant_id', '=', 'a.id')
             ->join('disciplines as d', 'a.discipline_id', '=', 'd.id')
             ->select(
-                'h.apprenant_id',
                 'h.carte_numero',
                 DB::raw('DATE(h.jour) as jour'),
                 DB::raw('MIN(h.premiere_utilisation) as premiere_utilisation'),
@@ -163,18 +172,26 @@ class HoraireController extends Controller
                 'd.nom as discipline'
             )
             ->groupBy(
-                'h.apprenant_id',
                 'h.carte_numero',
                 DB::raw('DATE(h.jour)'),
                 'a.nom',
                 'a.prenom',
                 'd.nom'
             )
-            ->orderBy('h.apprenant_id')
+            ->orderBy('a.nom')
+            ->orderBy('a.prenom')
             ->orderBy('jour')
             ->get();
-    
+
+        if ($horaires->isEmpty()) {
+            return response()->json(['message' => 'Aucun horaire trouvé'], 404);
+        }
+
         return response()->json($horaires);
+    } catch (\Exception $e) {
+        \Log::error('Erreur lors de la récupération des détails des horaires: ' . $e->getMessage());
+        return response()->json(['message' => 'Erreur interne du serveur'], 500);
     }
-    
+}
+
 }

@@ -1,50 +1,30 @@
-// components/Dashboard.jsx
-
 import React, { useEffect, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import Menu from '@/Pages/Admin/Menu.jsx';
-import { useTable } from 'react-table';
 import axios from 'axios';
+import DataTable from './Admin/Horaire/DataTable.jsx';  // Importer le composant DataTable
 import UsageChart from './Admin/Horaire/UsageChart.jsx';
-
-// Définir les colonnes pour react-table
-const columns = [
-    { Header: 'Nom', accessor: 'nom' },
-    { Header: 'Prénom', accessor: 'prenom' },
-    { Header: 'Numéro Carte', accessor: 'carte_numero' },
-    { Header: 'Jour', accessor: 'jour' },
-    { Header: 'Première Utilisation', accessor: 'premiere_utilisation' },
-    { Header: 'Dernière Utilisation', accessor: 'derniere_utilisation' },
-    { Header: 'Discipline', accessor: 'discipline' },
-];
+import ApprenantsSelect from './Admin/Horaire/ApprenantsSelect.jsx';  // Importer le nouveau composant
 
 const Dashboard = ({ auth }) => {
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [horaireData, setHoraireData] = useState([]);
+    const [loadingHoraire, setLoadingHoraire] = useState(true);
+    const [errorHoraire, setErrorHoraire] = useState(null);
 
     useEffect(() => {
-        axios.get('/horaire/detail')
+        // Charger les données d'horaire
+        axios.get('/horaire')
             .then(response => {
-                setData(response.data);
-                setLoading(false);
+                setHoraireData(response.data);
+                setLoadingHoraire(false);
             })
             .catch(error => {
-                console.error('Il y a eu une erreur!', error);
-                setError('Erreur lors du chargement des données');
-                setLoading(false);
+                console.error('Il y a eu une erreur lors du chargement des horaires!', error);
+                setErrorHoraire('Erreur lors du chargement des horaires');
+                setLoadingHoraire(false);
             });
-
     }, []);
-
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        rows,
-        prepareRow,
-    } = useTable({ columns, data });
 
     return (
         <AuthenticatedLayout
@@ -95,46 +75,27 @@ const Dashboard = ({ auth }) => {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <h2 className="font-semibold text-xl text-gray-800 leading-tight mb-4">Liste des horaires</h2>
-                        {loading ? (
+                        {loadingHoraire ? (
                             <p>Chargement des données...</p>
-                        ) : error ? (
-                            <p className="text-red-500">{error}</p>
+                        ) : errorHoraire ? (
+                            <p className="text-red-500">{errorHoraire}</p>
                         ) : (
-                            <table {...getTableProps()} className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
-                                <thead>
-                                    {headerGroups.map(headerGroup => (
-                                        <tr {...headerGroup.getHeaderGroupProps()} className="bg-gray-100">
-                                            {headerGroup.headers.map(column => (
-                                                <th {...column.getHeaderProps()} className="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">
-                                                    {column.render('Header')}
-                                                </th>
-                                            ))}
-                                        </tr>
-                                    ))}
-                                </thead>
-                                <tbody {...getTableBodyProps()}>
-                                    {rows.map(row => {
-                                        prepareRow(row);
-                                        return (
-                                            <tr {...row.getRowProps()} className="hover:bg-gray-50 transition-colors duration-150">
-                                                {row.cells.map(cell => (
-                                                    <td {...cell.getCellProps()} className="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
-                                                        {cell.render('Cell')}
-                                                    </td>
-                                                ))}
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
+                            <DataTable data={horaireData} />
                         )}
                     </div>
                 </div>
             </div>
 
+            {/* Section Liste des apprenants sur le côté */}
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <UsageChart data={data} />
+                    <ApprenantsSelect />
+                </div>
+            </div>
+
+            <div className="py-12">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <UsageChart data={horaireData} />
                 </div>
             </div>
         </AuthenticatedLayout>

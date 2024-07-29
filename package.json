@@ -27,6 +27,7 @@
         "@inertiajs/inertia-react": "^0.8.1",
         "bootstrap": "^5.3.3",
         "chart.js": "^4.4.3",
+        "date-fns": "^3.6.0",
         "react-bootstrap": "^2.10.4",
         "react-chartjs-2": "^5.2.0",
         "react-table": "^7.8.0",

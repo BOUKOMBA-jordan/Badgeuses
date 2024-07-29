@@ -33,10 +33,10 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::resource('discipline', DisciplineController::class);
     Route::resource('carte', CarteController::class);
 });
+
 // Routes resource pour Horaire
 Route::resource('horaire', HoraireController::class);
 
-// Ajouter une route personnalisée pour obtenir les détails des horaires
-Route::get('horaire/detail', [HoraireController::class, 'horaireDetail'])->name('horaire.detail');
+
 
 require __DIR__.'/auth.php';

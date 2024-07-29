@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { format } from 'date-fns';  // Importez format depuis date-fns
 
 const Horaire = () => {
   const [horaires, setHoraires] = useState([]);
@@ -7,7 +8,7 @@ const Horaire = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    axios.get('/api/horaire/index')  // Assurez-vous d'utiliser le bon endpoint
+    axios.get('/horaire/index')  // Assurez-vous d'utiliser le bon endpoint
       .then(response => {
         setHoraires(response.data);
         setLoading(false);
@@ -32,27 +33,23 @@ const Horaire = () => {
       <table className="table table-striped">
         <thead>
           <tr>
-            <th>Numéro Carte</th>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Discipline</th>
-            <th>Dernière Utilisation</th>
-            <th>Heures</th>
+            <th scope="col">Numéro Carte</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Prénom</th>
+            <th scope="col">Discipline</th>
+            <th scope="col">Première Utilisation</th>
+            <th scope="col">Dernière Utilisation</th>
           </tr>
         </thead>
         <tbody>
           {horaires.length > 0 ? horaires.map((horaire) => (
-            <tr key={horaire.id}>  {/* Utiliser un identifiant unique ici si disponible */}
+            <tr key={horaire.id}>  {/* Utiliser un identifiant unique ici */}
               <td>{horaire.carte_numero}</td>
-              <td>{horaire.nom}</td>
-              <td>{horaire.prenom}</td>
+              <td>{horaire.nom_apprenant}</td>
+              <td>{horaire.prenom_apprenant}</td>
               <td>{horaire.discipline}</td>
-              <td>{new Date(horaire.dernier_utilisation).toLocaleDateString()} {new Date(horaire.dernier_utilisation).toLocaleTimeString()}</td>
-              <td>
-                {horaire.heures && horaire.heures.length > 0 ? horaire.heures.map((heure, heureIndex) => (
-                  <div key={heureIndex}>{new Date(heure).toLocaleDateString()} {new Date(heure).toLocaleTimeString()}</div>
-                )) : 'Aucune heure enregistrée'}
-              </td>
+              <td>{format(new Date(horaire.premiere_utilisation), 'dd/MM/yyyy HH:mm')}</td>
+              <td>{format(new Date(horaire.derniere_utilisation), 'dd/MM/yyyy HH:mm')}</td>
             </tr>
           )) : (
             <tr>
