@@ -1,0 +1,18 @@
+/* Sidebar.css */
+#sidebar {
+    width: 250px;
+    transition: all 0.3s;
+  }
+  
+  #sidebar.sidebar-responsive {
+    width: 0;
+  }
+  
+  .content {
+    transition: margin-left 0.3s;
+  }
+  
+  .content-shifted {
+    margin-left: 250px;
+  }
+  

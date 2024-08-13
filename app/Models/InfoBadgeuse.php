@@ -9,5 +9,11 @@ class InfoBadgeuse extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['numero'];
+    protected $fillable = ['numero', 'month', 'value'];
+
+    // Assurez-vous d'avoir la relation correcte avec le modèle Apprenant
+    public function apprenant()
+    {
+        return $this->belongsTo(Apprenant::class);
+    }
 }

@@ -3,11 +3,13 @@
 use App\Http\Controllers\ApprenantController;
 use App\Http\Controllers\CarteController;
 use App\Http\Controllers\DisciplineController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\HoraireController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -34,8 +36,12 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::resource('carte', CarteController::class);
 });
 
-// Routes resource pour Horaire
-Route::resource('horaire', HoraireController::class);
+Route::resource('horaire', HoraireController::class)->middleware('auth');
+Route::get('/horaire-detail', [HoraireController::class, 'horaireDetail'])->middleware('auth');
+//Route::post('/horaire', [HoraireController::class, 'enregistrerHoraire']);
+
+
+//Route::get('/export', [ExportController::class, 'export'])->name('export');
 
 
 

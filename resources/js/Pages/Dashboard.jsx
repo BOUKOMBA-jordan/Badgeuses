@@ -1,30 +1,52 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import Menu from '@/Pages/Admin/Menu.jsx';
 import axios from 'axios';
-import DataTable from './Admin/Horaire/DataTable.jsx';  // Importer le composant DataTable
-import UsageChart from './Admin/Horaire/UsageChart.jsx';
-import ApprenantsSelect from './Admin/Horaire/ApprenantsSelect.jsx';  // Importer le nouveau composant
+import Text from '../Pages/Text';
+//import AbsenceCalendar from '../Pages/AbsenceCalendar'; // Assurez-vous que le chemin est correct
 
 const Dashboard = ({ auth }) => {
     const [horaireData, setHoraireData] = useState([]);
     const [loadingHoraire, setLoadingHoraire] = useState(true);
     const [errorHoraire, setErrorHoraire] = useState(null);
 
-    useEffect(() => {
-        // Charger les données d'horaire
-        axios.get('/horaire')
-            .then(response => {
-                setHoraireData(response.data);
-                setLoadingHoraire(false);
-            })
-            .catch(error => {
-                console.error('Il y a eu une erreur lors du chargement des horaires!', error);
-                setErrorHoraire('Erreur lors du chargement des horaires');
-                setLoadingHoraire(false);
-            });
+    // Etats pour le calendrier d'absences
+    const [apprenantId, setApprenantId] = useState('');
+    const [month, setMonth] = useState(new Date().getMonth() + 1);
+    const [year, setYear] = useState(new Date().getFullYear());
+    const [daysWithoutBadge, setDaysWithoutBadge] = useState([]);
+
+    const fetchHoraireData = useCallback(async () => {
+        try {
+            const response = await axios.get('/api/horaire');
+            setHoraireData(response.data);
+        } catch (error) {
+            console.error('Il y a eu une erreur lors du chargement des horaires!', error);
+            setErrorHoraire('Erreur lors du chargement des horaires');
+        } finally {
+            setLoadingHoraire(false);
+        }
     }, []);
+
+    const fetchDaysWithoutBadge = async (apprenantId, month, year) => {
+        if (!apprenantId) return;
+        try {
+            const response = await axios.get(`/apprenants/${apprenantId}/absences/${month}/${year}`);
+            setDaysWithoutBadge(response.data);
+        } catch (error) {
+            console.error('Erreur lors du chargement des jours sans badge:', error);
+            setDaysWithoutBadge([]);
+        }
+    };
+
+    useEffect(() => {
+        fetchHoraireData(); // Chargement des horaires seulement
+    }, [fetchHoraireData]);
+
+    useEffect(() => {
+        fetchDaysWithoutBadge(apprenantId, month, year); // Chargement des jours d'absence lorsque l'apprenant ou la période change
+    }, [apprenantId, month, year]);
 
     return (
         <AuthenticatedLayout
@@ -58,45 +80,13 @@ const Dashboard = ({ auth }) => {
             }
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>}
         >
-            <Head title="Dashboard" />
+            <Head title="FablabMoanda" />
+
             <Menu />
+            <Text />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            Vous êtes connecté !
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <h2 className="font-semibold text-xl text-gray-800 leading-tight mb-4">Liste des horaires</h2>
-                        {loadingHoraire ? (
-                            <p>Chargement des données...</p>
-                        ) : errorHoraire ? (
-                            <p className="text-red-500">{errorHoraire}</p>
-                        ) : (
-                            <DataTable data={horaireData} />
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {/* Section Liste des apprenants sur le côté */}
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <ApprenantsSelect />
-                </div>
-            </div>
-
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <UsageChart data={horaireData} />
-                </div>
+            <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12">
+                
             </div>
         </AuthenticatedLayout>
     );

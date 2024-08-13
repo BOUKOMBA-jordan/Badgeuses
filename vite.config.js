@@ -11,4 +11,9 @@ export default defineConfig({
         }),
         react(),
     ],
+    css: {
+        preprocessorOptions: {
+            // Ajoutez des options si nécessaire pour le préprocesseur CSS
+        },
+    },
 });

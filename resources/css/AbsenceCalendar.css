@@ -1,0 +1,24 @@
+.absence-calendar {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 jours dans une semaine */
+    gap: 1px;
+}
+
+.calendar-day {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    transition: background-color 0.3s;
+}
+
+.calendar-day.absent {
+    background-color: red;
+    color: #fff;
+}

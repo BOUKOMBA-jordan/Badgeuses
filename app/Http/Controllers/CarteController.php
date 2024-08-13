@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use \Log;
 use App\Models\Carte;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class CarteController extends Controller

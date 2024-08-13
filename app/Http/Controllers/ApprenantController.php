@@ -14,18 +14,23 @@ class ApprenantController extends Controller
     {
         $apprenants = Apprenant::with('discipline')->get();
         $disciplines = Discipline::all();
-    
+
         return Inertia::render('Admin/Apprenant/Index', [
             'apprenants' => $apprenants,
             'disciplines' => $disciplines,
         ]);
     }
-    
+
+    public function apprenantSelect()
+    {
+        $apprenants = Apprenant::all();
+        return response()->json($apprenants);
+    }
 
     public function create()
     {
         $disciplines = Discipline::all();
-        $cartes = Carte::all(); // Assurez-vous que cette ligne est ajoutée
+        $cartes = Carte::all();
 
         return Inertia::render('Admin/Apprenant/Create', [
             'disciplines' => $disciplines,
@@ -58,12 +63,12 @@ class ApprenantController extends Controller
     public function edit(Apprenant $apprenant)
     {
         $disciplines = Discipline::all();
-        $cartes = Carte::all(); // Assurez-vous que cette ligne est ajoutée
+        $cartes = Carte::all();
 
         return Inertia::render('Admin/Apprenant/Edit', [
             'apprenant' => $apprenant,
             'disciplines' => $disciplines,
-            'cartes' => $cartes, // Ajoutez les cartes ici
+            'cartes' => $cartes,
         ]);
     }
 
